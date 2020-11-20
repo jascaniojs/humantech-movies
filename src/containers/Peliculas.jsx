@@ -22,8 +22,9 @@ const Peliculas = () => {
   const [pelicula, setPelicula] = React.useState();
 
   const handleClose = () => {
-    setDialog(false);
     setPelicula({});
+
+    setDialog(false);
   };
 
   const handleClickOpen = () => {
@@ -78,11 +79,13 @@ const Peliculas = () => {
         editMovie={handleEdit}
         movies
       />
-      <MovieDialog
-        open={openDialog}
-        pelicula={pelicula}
-        handleClose={handleClose}
-      />
+      {openDialog && (
+        <MovieDialog
+          open={openDialog}
+          pelicula={pelicula}
+          handleClose={handleClose}
+        />
+      )}
     </>
   );
 };

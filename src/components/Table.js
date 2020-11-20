@@ -47,18 +47,10 @@ const StyledTableSortLabel = withStyles((theme) => ({
     '&$active': {
       color: theme.palette.warning.main,
       // && instead of & is a workaround for https://github.com/cssinjs/jss/issues/1045
-      '&& $icon': {
-        opacity: 1,
-        color: theme.palette.warning.main,
-      },
     },
   },
   active: { color: theme.palette.warning.main },
 }))(TableSortLabel);
-
-const createData = ({ id, nombre, fecha, estado }) => {
-  return { id, nombre, fecha, estado };
-};
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -171,13 +163,78 @@ const MoviesIcons = ({ row, handleLock, editMovie }) => (
   </StyledTableCell>
 );
 
+const MoviesBody = ({ order, orderBy, rows, handleLock, editMovie }) => {
+  return (
+    <>
+      {stableSort(rows, getComparator(order, orderBy), orderBy).map(
+        (row, index) => {
+          return (
+            <StyledTableRow key={row.id}>
+              <StyledTableCell>{row.id}</StyledTableCell>
+              <StyledTableCell component='th' scope='row'>
+                {row.nombre}
+              </StyledTableCell>
+              <StyledTableCell align='right'>{row.fecha}</StyledTableCell>
+              <StyledTableCell align='right'>
+                {row.estado ? 'Activo' : 'Desactivado'}
+              </StyledTableCell>
+              <MoviesIcons
+                row={row}
+                handleLock={handleLock}
+                editMovie={editMovie}
+              />
+            </StyledTableRow>
+          );
+        }
+      )}
+    </>
+  );
+};
+
+const TurnsIcons = ({ row, handleLock, editTurn }) => (
+  <StyledTableCell align='right'>
+    <IconButton onClick={() => editTurn(row)} aria-label='edit'>
+      <EditIcon />
+    </IconButton>
+    <IconButton onClick={handleLock} aria-label='lock'>
+      {row.lock ? <LockIcon /> : <LockOpenIcon />}
+    </IconButton>
+    <IconButton aria-label='delete'>
+      <DeleteIcon />
+    </IconButton>
+  </StyledTableCell>
+);
+
+const TurnsBody = ({ order, orderBy, rows, handleLock, editTurn }) => {
+  return (
+    <>
+      {stableSort(rows, getComparator(order, orderBy), orderBy).map(
+        (row, index) => {
+          return (
+            <StyledTableRow key={row.id}>
+              <StyledTableCell>{row.id}</StyledTableCell>
+              <StyledTableCell component='th'>{row.hora}</StyledTableCell>
+              <StyledTableCell align='right'>
+                {row.estado ? 'Activo' : 'Desactivado'}
+              </StyledTableCell>
+              <TurnsIcons
+                row={row}
+                handleLock={handleLock}
+                editTurn={editTurn}
+              />
+            </StyledTableRow>
+          );
+        }
+      )}
+    </>
+  );
+};
+
 const CustomTable = (props) => {
   const classes = useStyles();
-  const { data, editMovie, handleLock, headers, movies = [] } = props;
+  const { data, editMovie, handleLock, headers, movies, editTurn } = props;
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('nombre');
-
-  const rows = data;
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -186,7 +243,7 @@ const CustomTable = (props) => {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-  console.log(rows);
+  console.log(data);
 
   return (
     <TableContainer style={{ marginTop: 32 }} component={Paper}>
@@ -199,28 +256,22 @@ const CustomTable = (props) => {
           headers={headers}
         />
         <TableBody>
-          {stableSort(rows, getComparator(order, orderBy), orderBy).map(
-            (row, index) => {
-              return (
-                <StyledTableRow key={row.id}>
-                  <StyledTableCell>{row.id}</StyledTableCell>
-                  <StyledTableCell component='th' scope='row'>
-                    {row.nombre}
-                  </StyledTableCell>
-                  <StyledTableCell align='right'>{row.fecha}</StyledTableCell>
-                  <StyledTableCell align='right'>
-                    {row.estado ? 'Activo' : 'Desactivado'}
-                  </StyledTableCell>
-                  {movies ? (
-                    <MoviesIcons
-                      row={row}
-                      handleLock={handleLock}
-                      editMovie={editMovie}
-                    />
-                  ) : null}
-                </StyledTableRow>
-              );
-            }
+          {movies ? (
+            <MoviesBody
+              rows={data}
+              order={order}
+              orderBy={orderBy}
+              handleLock={handleLock}
+              editMovie={editMovie}
+            />
+          ) : (
+            <TurnsBody
+              rows={data}
+              order={order}
+              orderBy={orderBy}
+              handleLock={handleLock}
+              editTurn={editTurn}
+            />
           )}
         </TableBody>
       </Table>
