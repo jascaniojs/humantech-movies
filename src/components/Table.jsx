@@ -15,6 +15,7 @@ import LockIcon from '@material-ui/icons/Lock';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
+import { parse, format } from 'date-fns';
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -143,24 +144,42 @@ CustomTableHead.propTypes = {
   orderBy: PropTypes.string.isRequired,
 };
 
-const MoviesIcons = ({ row, handleLock, editMovie }) => (
+const MoviesIcons = ({ row, handleLock, editMovie, deleteMovie }) => (
   <StyledTableCell align='right'>
-    <IconButton onClick={() => editMovie(row)} aria-label='edit'>
+    <IconButton
+      disabled={row.lock}
+      onClick={() => editMovie(row)}
+      aria-label='edit'
+    >
       <EditIcon />
     </IconButton>
-    <IconButton aria-label='menu'>
+    <IconButton disabled={row.lock} aria-label='menu'>
       <MenuIcon />
     </IconButton>
-    <IconButton onClick={handleLock} aria-label='lock'>
+    <IconButton
+      onClick={() => handleLock(!row.lock, row.id)}
+      aria-label='lock'
+    >
       {row.lock ? <LockIcon /> : <LockOpenIcon />}
     </IconButton>
-    <IconButton aria-label='delete'>
+    <IconButton
+      disabled={row.lock}
+      onClick={() => deleteMovie(row.id)}
+      aria-label='delete'
+    >
       <DeleteIcon />
     </IconButton>
   </StyledTableCell>
 );
 
-const MoviesBody = ({ order, orderBy, rows, handleLock, editMovie }) => {
+const MoviesBody = ({
+  order,
+  orderBy,
+  rows,
+  handleLock,
+  editMovie,
+  deleteMovie,
+}) => {
   return (
     <>
       {stableSort(rows, getComparator(order, orderBy), orderBy).map(
@@ -179,6 +198,7 @@ const MoviesBody = ({ order, orderBy, rows, handleLock, editMovie }) => {
                 row={row}
                 handleLock={handleLock}
                 editMovie={editMovie}
+                deleteMovie={deleteMovie}
               />
             </StyledTableRow>
           );
@@ -193,7 +213,7 @@ const TurnsIcons = ({ row, handleLock, editTurn }) => (
     <IconButton onClick={() => editTurn(row)} aria-label='edit'>
       <EditIcon />
     </IconButton>
-    <IconButton onClick={handleLock} aria-label='lock'>
+    <IconButton onClick={() => handleLock(!row.lock, row.id)} aria-label='lock'>
       {row.lock ? <LockIcon /> : <LockOpenIcon />}
     </IconButton>
     <IconButton aria-label='delete'>
@@ -229,7 +249,15 @@ const TurnsBody = ({ order, orderBy, rows, handleLock, editTurn }) => {
 
 const CustomTable = (props) => {
   const classes = useStyles();
-  const { data, editMovie, handleLock, headers, movies, editTurn } = props;
+  const {
+    data,
+    editMovie,
+    handleLock,
+    headers,
+    movies,
+    editTurn,
+    deleteMovie,
+  } = props;
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('nombre');
 
@@ -260,6 +288,7 @@ const CustomTable = (props) => {
               orderBy={orderBy}
               handleLock={handleLock}
               editMovie={editMovie}
+              deleteMovie={deleteMovie}
             />
           ) : (
             <TurnsBody

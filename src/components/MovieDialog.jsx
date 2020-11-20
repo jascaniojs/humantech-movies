@@ -13,6 +13,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { makeStyles } from '@material-ui/core/styles';
+import { parse, format } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -22,12 +23,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const MovieDialog = (props) => {
-  const { open, handleClose, pelicula = {} } = props;
+  const { open, handleClose, pelicula = {}, saveMovie } = props;
   const classes = useStyles();
 
-  const [estado, setEstado] = React.useState('');
+  const [estado, setEstado] = React.useState(false);
   const [fecha, setFecha] = React.useState(new Date());
-  const [nombre, setNombre] = React.useState();
+  const [nombre, setNombre] = React.useState('');
   useEffect(() => {
     if (Object.keys(pelicula).length > 0) {
       setNombre(pelicula.nombre);
@@ -44,12 +45,32 @@ const MovieDialog = (props) => {
   const handleName = (event) => {
     setNombre(event.target.value);
   };
+
+  const handleSave = () => {
+    console.log('1');
+    const date = format(fecha, 'yyyy-MM-dd', new Date());
+    const locked = false;
+    if (pelicula.id) {
+      return saveMovie(
+        {
+          nombre,
+          fecha: date,
+          estado,
+          locked,
+        },
+        pelicula.id
+      );
+    }
+
+    saveMovie({ nombre, fecha: date, estado, locked });
+  };
+
   const validate = () => {
     console.log(nombre);
     if (
       typeof fecha !== 'undefined' &&
       typeof estado !== 'undefined' &&
-      typeof nombre !== 'undefined'
+      nombre.length > 0
     ) {
       return true;
     }
@@ -123,7 +144,11 @@ const MovieDialog = (props) => {
           <Button onClick={handleClose} color='secondary'>
             Cancelar
           </Button>
-          <Button onClick={handleClose} disabled={!complete} color='primary'>
+          <Button
+            onClick={() => handleSave()}
+            disabled={!complete}
+            color='primary'
+          >
             Guardar
           </Button>
         </DialogActions>
