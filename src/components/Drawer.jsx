@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
+import Avatar from '@material-ui/core/Avatar';
+import FaceIcon from '@material-ui/icons/Face';
 import { NavLink, withRouter } from 'react-router-dom';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
+import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import List from '@material-ui/core/List';
@@ -18,7 +21,7 @@ import { makeStyles, useTheme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 const drawerWidth = 240;
-const barHeigth = 120;
+const barHeigth = 60;
 const useStyles = makeStyles((theme) => ({
   main: {
     display: 'flex',
@@ -55,6 +58,17 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  large: {
+    width: theme.spacing(6),
+    height: theme.spacing(6),
+    marginRight: 8,
+  },
+  avatar: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
 }));
 
 function ResponsiveDrawer(props) {
@@ -78,7 +92,11 @@ function ResponsiveDrawer(props) {
           { text: 'Perfil', path: '/perfil' },
           { text: 'Cerrar sesión', path: '' },
         ].map((route, index) => (
-          <NavLink to={route.path} style={{ textDecoration: 'none' }} key={route.text}>
+          <NavLink
+            to={route.path}
+            style={{ textDecoration: 'none' }}
+            key={route.text}
+          >
             <ListItem button key={route.text}>
               <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
@@ -108,9 +126,22 @@ function ResponsiveDrawer(props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant='h6' noWrap>
-            Responsive drawer
-          </Typography>
+          <Grid
+            container
+            direction='row'
+            justify='space-between'
+            alignItems='center'
+          >
+            <Typography variant='h6' noWrap>
+              UI Gestor de Peliculas
+            </Typography>
+            <div className={classes.avatar}>
+              <Avatar className={classes.large}>
+                <FaceIcon />
+              </Avatar>
+              <Typography variant='b1'>Admin</Typography>
+            </div>
+          </Grid>
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer} aria-label='mailbox folders'>

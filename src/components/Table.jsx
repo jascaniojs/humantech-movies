@@ -40,9 +40,6 @@ const StyledTableSortLabel = withStyles((theme) => ({
     },
     '&:hover': {
       color: theme.palette.warning.light,
-      '& $icon': {
-        opacity: 0.5,
-      },
     },
     '&$active': {
       color: theme.palette.warning.main,
