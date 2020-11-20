@@ -1,10 +1,8 @@
-const get = (url = '', headers = {}) =>
+const get = (url = '') =>
   fetch(url, {
     method: 'GET',
     headers: {
-      Accept: 'application/json',
       'Content-Type': 'application/json',
-      ...headers,
     },
   }).then((response) => response.json());
 
@@ -18,7 +16,28 @@ const post = (url = '', body = {}, headers = {}) =>
     },
   }).then((response) => response.json());
 
+const put = (url = '', body = {}, headers = {}) =>
+  fetch(url, {
+    method: 'PUT',
+    body: JSON.stringify(body),
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json',
+    },
+  }).then((response) => response.json());
+
+const remove = (url = '', body = {}, headers = {}) =>
+  fetch(url, {
+    method: 'DELETE',
+    body: JSON.stringify(body),
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json',
+    },
+  }).then((response) => response.json());
 export default {
   get,
   post,
+  put,
+  remove,
 };

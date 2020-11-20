@@ -1,22 +1,48 @@
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'SET_FAVORITE':
+    case 'READ_MOVIES_SUCCEDED':
       return {
         ...state,
-        myList: [...state.myList, action.payload],
+        peliculas: action.res,
+        requestedP: true,
       };
-    case 'DELETE_FAVORITE':
+    case 'CREATE_MOVIES_SUCCEDED':
       return {
         ...state,
-        myList: state.myList.filter((item) => item.id !== action.payload),
+        peliculas: [
+          ...state.peliculas,
+          { id: action.res.id, ...action.payload },
+        ],
       };
-    case 'GET_VIDEO_SOURCE':
+    case 'EDIT_MOVIES_SUCCEDED':
       return {
         ...state,
-        playing:
-          state.trends.find((item) => item.id === Number(action.payload)) ||
-          state.originals.find((item) => item.id === Number(action.payload)) ||
-          {},
+        peliculas: state.peliculas.map((pelicula) => {
+          if (action.payload.id === pelicula.id) {
+            return {
+              ...pelicula,
+              ...action.payload.pelicula,
+            };
+          }
+
+          return pelicula;
+        }),
+      };
+    case 'DELETE_MOVIES_SUCCEDED':
+      return {
+        ...state,
+        peliculas: state.peliculas.filter((item) => item.id !== action.payload),
+      };
+    case 'READ_TURNS_SUCCEDED':
+      return {
+        ...state,
+        turnos: action.res,
+        requestedT: true,
+      };
+    case 'CREATE_TURNS_SUCCEDED':
+      return {
+        ...state,
+        turnos: [...state.turnos, { id: action.res.id, ...action.payload }],
       };
     default:
       return state;
