@@ -7,10 +7,14 @@ const Search = ({ isHome }) => {
   const title = '¿Qué quieres ver hoy?';
   const searchPlaceholder = 'Buscar...';
   return (
-    <section className='main'>
+    <>
       <h2 className='main__title'>{title}</h2>
-      <input type='text' className={inputStyle} placeholder={searchPlaceholder} />
-    </section>
+      <input
+        type='text'
+        className={inputStyle}
+        placeholder={searchPlaceholder}
+      />
+    </>
   );
 };
 
