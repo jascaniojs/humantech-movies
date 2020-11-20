@@ -139,7 +139,7 @@ function ResponsiveDrawer(props) {
               <Avatar className={classes.large}>
                 <FaceIcon />
               </Avatar>
-              <Typography variant='b1'>Admin</Typography>
+              <Typography variant='body1'>Admin</Typography>
             </div>
           </Grid>
         </Toolbar>

@@ -4,7 +4,6 @@
 body {
   margin: 0;
   font-family: $theme-font;
-  background: $main-color;
 }
 
 * {
@@ -12,7 +11,7 @@ body {
 }
 
 .button {
-  background-color: rgba(255, 255, 255, .3);
+  background-color: rgba(255, 255, 255, 0.3);
   border: none;
   border-radius: 25px;
   color: white;
