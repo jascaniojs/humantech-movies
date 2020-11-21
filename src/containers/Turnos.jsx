@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -14,7 +16,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import { makeStyles } from '@material-ui/core/styles';
 import CustomTable from '../components/Table';
-import MovieDialog from '../components/MovieDialog';
+import { getTurns, createTurn, editTurn } from '../actions';
 
 const TurnoForm = ({
   classes,
@@ -25,6 +27,7 @@ const TurnoForm = ({
   hora,
   estado,
   handleChange,
+  saveTurn,
 }) => {
   return (
     <>
@@ -57,8 +60,10 @@ const TurnoForm = ({
           />
         </FormControl>
       </MuiPickersUtilsProvider>
-
-      <Button onClick={handleClose} disabled={!complete} color='primary'>
+      <Button onClick={() => handleClose()} color='secondary'>
+        Cancelar
+      </Button>
+      <Button onClick={() => saveTurn()} disabled={!complete} color='primary'>
         Guardar
       </Button>
     </>
@@ -78,8 +83,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Turnos = () => {
+const Turnos = (props) => {
   const classes = useStyles();
+  const { turnos = [], requestedT } = props;
 
   const [showForm, setShowForm] = React.useState(false);
   const [turno, setTurno] = React.useState({});
@@ -87,15 +93,27 @@ const Turnos = () => {
   const [hora, setHora] = React.useState(new Date());
 
   useEffect(() => {
+    const { getTurns } = props;
+
     if (Object.keys(turno).length > 0) {
-      setHora(parse(turno.hora, 'HH:mm', new Date()));
+      setHora(
+        format(
+          parse(turno.hora, 'HH:mm:ss.SSS', new Date()),
+          'HH:mm',
+          new Date()
+        )
+      );
       setEstado(turno.estado);
     }
-  }, [turno]);
+    if (turnos.length === 0 && !requestedT) {
+      getTurns();
+    }
+    console.log(hora);
+  }, [turno, turnos]);
 
   const handleClose = () => {
-    setShowForm(false);
     setTurno({});
+    setShowForm(false);
   };
 
   const handleClickOpen = () => {
@@ -107,6 +125,23 @@ const Turnos = () => {
   };
   const handleChange = (event) => {
     setEstado(!estado);
+  };
+
+  const handleCreate = (id) => {
+    const { createTurn, editTurn } = props;
+    if (id) {
+      return editTurn({ id, turno }).then(setShowForm(false));
+    }
+    const time = format(hora, 'HH:mm:ss.SSS', new Date());
+    const turn = { hora: time, estado, locked: false };
+
+    createTurn(turn).then(setShowForm(false));
+  };
+
+  const handleLock = (lock, id) => {
+    const { editTurn } = props;
+
+    editTurn({ id, turn: { lock } }).then(setDialog(false));
   };
 
   const handleEdit = (pelicula) => {
@@ -148,7 +183,7 @@ const Turnos = () => {
       {!showForm ? (
         <CustomTable
           headers={headCells}
-          data={rows}
+          data={turnos}
           editTurn={handleEdit}
           turnos
         />
@@ -162,10 +197,17 @@ const Turnos = () => {
           complete
           handleDateChange={handleDateChange}
           handleChange={handleChange}
+          saveTurn={handleCreate}
         />
       )}
     </>
   );
 };
 
-export default Turnos;
+const mapStateToProps = (state) => state;
+const mapDispatchToProps = {
+  getTurns,
+  createTurn,
+  editTurn,
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Turnos);

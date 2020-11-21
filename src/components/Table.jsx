@@ -156,10 +156,7 @@ const MoviesIcons = ({ row, handleLock, editMovie, deleteMovie }) => (
     <IconButton disabled={row.lock} aria-label='menu'>
       <MenuIcon />
     </IconButton>
-    <IconButton
-      onClick={() => handleLock(!row.lock, row.id)}
-      aria-label='lock'
-    >
+    <IconButton onClick={() => handleLock(!row.lock, row.id)} aria-label='lock'>
       {row.lock ? <LockIcon /> : <LockOpenIcon />}
     </IconButton>
     <IconButton
@@ -227,10 +224,15 @@ const TurnsBody = ({ order, orderBy, rows, handleLock, editTurn }) => {
     <>
       {stableSort(rows, getComparator(order, orderBy), orderBy).map(
         (row, index) => {
+          const hora = format(
+            parse(row.hora, 'HH:mm:ss.SSS', new Date()),
+            'HH:mm',
+            new Date()
+          );
           return (
             <StyledTableRow key={row.id}>
               <StyledTableCell>{row.id}</StyledTableCell>
-              <StyledTableCell component='th'>{row.hora}</StyledTableCell>
+              <StyledTableCell component='th'>{hora}</StyledTableCell>
               <StyledTableCell align='right'>
                 {row.estado ? 'Activo' : 'Desactivado'}
               </StyledTableCell>
