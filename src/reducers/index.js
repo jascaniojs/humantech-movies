@@ -44,6 +44,25 @@ const reducer = (state, action) => {
         ...state,
         turnos: [...state.turnos, { id: action.res.id, ...action.payload }],
       };
+    case 'EDIT_TURNS_SUCCEDED':
+      return {
+        ...state,
+        turnos: state.turnos.map((turno) => {
+          if (action.payload.id === turno.id) {
+            return {
+              ...turno,
+              ...action.payload.turno,
+            };
+          }
+
+          return turno;
+        }),
+      };
+    case 'DELETE_TURNS_SUCCEDED':
+      return {
+        ...state,
+        turnos: state.turnos.filter((item) => item.id !== action.payload),
+      };
     default:
       return state;
   }

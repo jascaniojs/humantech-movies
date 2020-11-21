@@ -16,7 +16,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import { makeStyles } from '@material-ui/core/styles';
 import CustomTable from '../components/Table';
-import { getTurns, createTurn, editTurn } from '../actions';
+import { getTurns, createTurn, editTurn, deleteTurn } from '../actions';
 
 const TurnoForm = ({
   classes,
@@ -29,9 +29,13 @@ const TurnoForm = ({
   handleChange,
   saveTurn,
 }) => {
+  const showTurn = Object.keys(turno).length > 0;
   return (
-    <>
+    <div className={classes.form}>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <Typography variant='h4'>
+          {showTurn ? `Editar Turno ${turno.id}` : 'Nuevo Turno'}
+        </Typography>
         <FormControl variant='outlined' className={classes.formControl}>
           <TimePicker
             autoOk
@@ -66,7 +70,7 @@ const TurnoForm = ({
       <Button onClick={() => saveTurn()} disabled={!complete} color='primary'>
         Guardar
       </Button>
-    </>
+    </div>
   );
 };
 
@@ -79,6 +83,10 @@ const useStyles = makeStyles((theme) => ({
   },
   formControl: {
     margin: theme.spacing(1),
+    width: '100%',
+  },
+  form: {
+    marginTop: theme.spacing(3),
     width: '100%',
   },
 }));
@@ -96,13 +104,7 @@ const Turnos = (props) => {
     const { getTurns } = props;
 
     if (Object.keys(turno).length > 0) {
-      setHora(
-        format(
-          parse(turno.hora, 'HH:mm:ss.SSS', new Date()),
-          'HH:mm',
-          new Date()
-        )
-      );
+      setHora(parse(turno.hora, 'HH:mm:ss.SSS', new Date()));
       setEstado(turno.estado);
     }
     if (turnos.length === 0 && !requestedT) {
@@ -113,6 +115,8 @@ const Turnos = (props) => {
 
   const handleClose = () => {
     setTurno({});
+    setHora(new Date());
+    setEstado(false);
     setShowForm(false);
   };
 
@@ -127,13 +131,13 @@ const Turnos = (props) => {
     setEstado(!estado);
   };
 
-  const handleCreate = (id) => {
+  const handleCreate = () => {
     const { createTurn, editTurn } = props;
-    if (id) {
-      return editTurn({ id, turno }).then(setShowForm(false));
-    }
     const time = format(hora, 'HH:mm:ss.SSS', new Date());
     const turn = { hora: time, estado, locked: false };
+    if (turno.id) {
+      return editTurn({ id: turno.id, turno: turn }).then(setShowForm(false));
+    }
 
     createTurn(turn).then(setShowForm(false));
   };
@@ -141,7 +145,13 @@ const Turnos = (props) => {
   const handleLock = (lock, id) => {
     const { editTurn } = props;
 
-    editTurn({ id, turn: { lock } }).then(setDialog(false));
+    editTurn({ id, turno: { lock } });
+  };
+
+  const handleDelete = (id) => {
+    const { deleteTurn } = props;
+
+    deleteTurn(id);
   };
 
   const handleEdit = (pelicula) => {
@@ -150,13 +160,6 @@ const Turnos = (props) => {
     setShowForm(true);
   };
 
-  const rows = [
-    { id: 2, hora: '13:30', estado: true },
-    { id: 1, hora: '15:40', estado: false },
-    { id: 3, hora: '17:40', estado: true },
-    { id: 4, hora: '13:30', estado: false },
-    { id: 5, hora: '13:30', estado: true },
-  ];
   const headCells = [
     { id: 'id', disablePadding: false, label: 'Id', right: false },
     {
@@ -185,6 +188,8 @@ const Turnos = (props) => {
           headers={headCells}
           data={turnos}
           editTurn={handleEdit}
+          deleteTurn={handleDelete}
+          handleLockT={handleLock}
           turnos
         />
       ) : (
@@ -209,5 +214,6 @@ const mapDispatchToProps = {
   getTurns,
   createTurn,
   editTurn,
+  deleteTurn,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Turnos);

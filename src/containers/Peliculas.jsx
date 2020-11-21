@@ -98,7 +98,7 @@ const Peliculas = (props) => {
         data={peliculas}
         editMovie={handleEdit}
         deleteMovie={handleDelete}
-        handleLock={handleLock}
+        handleLockM={handleLock}
         movies
       />
       {openDialog && (

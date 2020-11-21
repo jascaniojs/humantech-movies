@@ -205,21 +205,36 @@ const MoviesBody = ({
   );
 };
 
-const TurnsIcons = ({ row, handleLock, editTurn }) => (
+const TurnsIcons = ({ row, handleLock, editTurn, deleteTurn }) => (
   <StyledTableCell align='right'>
-    <IconButton onClick={() => editTurn(row)} aria-label='edit'>
+    <IconButton
+      disabled={row.lock}
+      onClick={() => editTurn(row)}
+      aria-label='edit'
+    >
       <EditIcon />
     </IconButton>
     <IconButton onClick={() => handleLock(!row.lock, row.id)} aria-label='lock'>
       {row.lock ? <LockIcon /> : <LockOpenIcon />}
     </IconButton>
-    <IconButton aria-label='delete'>
+    <IconButton
+      disabled={row.lock}
+      onClick={() => deleteTurn(row.id)}
+      aria-label='delete'
+    >
       <DeleteIcon />
     </IconButton>
   </StyledTableCell>
 );
 
-const TurnsBody = ({ order, orderBy, rows, handleLock, editTurn }) => {
+const TurnsBody = ({
+  order,
+  orderBy,
+  rows,
+  handleLock,
+  editTurn,
+  deleteTurn,
+}) => {
   return (
     <>
       {stableSort(rows, getComparator(order, orderBy), orderBy).map(
@@ -240,6 +255,7 @@ const TurnsBody = ({ order, orderBy, rows, handleLock, editTurn }) => {
                 row={row}
                 handleLock={handleLock}
                 editTurn={editTurn}
+                deleteTurn={deleteTurn}
               />
             </StyledTableRow>
           );
@@ -254,18 +270,19 @@ const CustomTable = (props) => {
   const {
     data,
     editMovie,
-    handleLock,
+    handleLockM,
+    handleLockT,
     headers,
     movies,
     editTurn,
     deleteMovie,
+    deleteTurn,
   } = props;
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('nombre');
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
-    console.log(orderBy);
 
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
@@ -288,7 +305,7 @@ const CustomTable = (props) => {
               rows={data}
               order={order}
               orderBy={orderBy}
-              handleLock={handleLock}
+              handleLock={handleLockM}
               editMovie={editMovie}
               deleteMovie={deleteMovie}
             />
@@ -297,8 +314,9 @@ const CustomTable = (props) => {
               rows={data}
               order={order}
               orderBy={orderBy}
-              handleLock={handleLock}
+              handleLock={handleLockT}
               editTurn={editTurn}
+              deleteTurn={deleteTurn}
             />
           )}
         </TableBody>

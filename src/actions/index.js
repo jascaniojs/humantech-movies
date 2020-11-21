@@ -127,10 +127,11 @@ export const createTurn = (payload) => (dispatch) => {
 export const editTurn = (payload) => (dispatch) => {
   dispatch({
     type: 'EDIT_TURNS_REQUEST',
+    payload,
   });
   return new Promise(
     (resolve, reject) => {
-      mainServices.editTurn(payload).then((res) => {
+      mainServices.editTurns(payload.id, payload.turno).then((res) => {
         dispatch({
           type: 'EDIT_TURNS_SUCCEDED',
           payload,
@@ -144,13 +145,13 @@ export const editTurn = (payload) => (dispatch) => {
     }
   );
 };
-export const deleteTurns = (payload) => (dispatch) => {
+export const deleteTurn = (payload) => (dispatch) => {
   dispatch({
     type: 'DELETE_TURNS_REQUEST',
   });
   return new Promise(
     (resolve, reject) => {
-      mainServices.removeTurn(payload).then((res) => {
+      mainServices.removeTurns(payload).then((res) => {
         dispatch({
           type: 'DELETE_TURNS_SUCCEDED',
           payload,
