@@ -16,6 +16,8 @@
     "@webpack-cli/init": "^1.0.2",
     "classnames": "^2.2.6",
     "date-fns": "^2.16.1",
+    "ml5": "^0.6.0",
+    "p5": "^1.1.9",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -23,7 +25,9 @@
     "react-router-dom": "^5.2.0",
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "shortid": "^2.2.16",
+    "videojs-record": "^4.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",

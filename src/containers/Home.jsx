@@ -1,13 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import Search from '../components/Search';
+import { generate } from 'shortid';
+import Button from '@material-ui/core/Button';
+
+import sketchPosenet from '../sketchs/sketchPosenet';
+import p5Wrapper from '../components/P5comp';
+
 import '../assets/styles/App.scss';
+
+const P5Wrapper1 = p5Wrapper(generate());
 
 const Home = ({ myList, trends, originals }) => {
   //const initialState = useInitialState(API);
+  const [recording, toogleRecording] = useState(false);
   return (
     <>
-      <Search isHome />
+      <P5Wrapper1 sketch={sketchPosenet} record={recording} />
+      <Button color='primary' onClick={() => toogleRecording(!recording)}>
+        {recording ? 'Grabar' : 'Grabar'}
+      </Button>
     </>
   );
 };

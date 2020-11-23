@@ -133,13 +133,13 @@ function ResponsiveDrawer(props) {
             alignItems='center'
           >
             <Typography variant='h6' noWrap>
-              UI Gestor de Peliculas
+              UI Gestor de Videos
             </Typography>
             <div className={classes.avatar}>
               <Avatar className={classes.large}>
                 <FaceIcon />
               </Avatar>
-              <Typography variant='body1'>Admin</Typography>
+              <Typography variant='body1'>Usuario</Typography>
             </div>
           </Grid>
         </Toolbar>
